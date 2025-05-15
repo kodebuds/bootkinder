@@ -1,3 +1,6 @@
+# Copyright (c) 2025 Kodebuds - All rights reserved under the Apache License 2.0.
+#             app: The main application instance.
+
 import tkinter as tk
 from tkinter import ttk
 from ui.widget.containers import Container
@@ -24,7 +27,7 @@ class App:
         self.height = 720 # Set the  height of the window
 
         self._center_window()  # Call the method to center the window
-        self._create_widgets() # Call the method to create the widgets
+        self._create_layout() # Call the method to create the layout
 
     def _center_window(self):
         """
@@ -46,13 +49,26 @@ class App:
         self.root.resizable(True, True) # Allow resizing
         self.root.minsize(1024, 720)    # Set minimum window size
 
-    def _create_widgets(self):
+    def _create_layout(self):
         """
-        Creates the widgets for the application. Adds widgets to the main window.
+        Creates the layout for the application. Adds widgets to the main window.
+        Demonstrates usage of the flexible Container with 2 columns (3:9 ratio).
         """
-        # Example of adding a container widget
-        container = Container(self.root) 
+        # Create a container with 2 columns, using a 3:9 width ratio
+        container = Container(self.root, columns=2, weights=[3, 9])
         container.pack(fill=tk.BOTH, expand=True)
+
+        # Example: Add widgets to each column
+        left_col = container.get_column(0)
+        right_col = container.get_column(1)
+
+        # Add a label to the left column
+        left_label = ttk.Label(left_col, text="Left Column (3/12)")
+        left_label.pack(padx=10, pady=10)
+
+        # Add a label to the right column
+        right_label = ttk.Label(right_col, text="Right Column (9/12)")
+        right_label.pack(padx=10, pady=10)
 
     def run(self):
         """

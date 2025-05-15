@@ -4,58 +4,62 @@ from ui.theme import Theme
 
 class Container(ttk.Frame):
     """
-    A reusable container widget with two columns, each having a different background color.
-    Useful for layouts where you want to visually separate two sections side by side.
+    A flexible container widget that supports any number of columns, inspired by Bootstrap's grid system.
+    Allows custom width ratios and background colors for each column.
     """
-    # Class-level flag to ensure styles are only configured once
-    _styles_configured = False
+    _styles_configured = set()  # Track which column styles have been configured
 
-    def __init__(self, parent, left_bg=Theme.BACKGROUND, right_bg=Theme.SURFACE, **kwargs):
+    def __init__(self, parent, columns=2, weights=None, bgs=None, **kwargs):
         """
         Initialize the Container.
 
         Args:
             parent: The parent tkinter widget.
-            left_bg: Background color for the left column.
-            right_bg: Background color for the right column.
+            columns: Number of columns to create (default 2).
+            weights: List of grid weights for each column (default: equal weights).
+            bgs: List of background colors for each column (default: theme colors).
             **kwargs: Additional keyword arguments for the Frame.
         """
         super().__init__(parent, **kwargs)
 
-        # Use fixed style names for left and right columns
-        left_style = "LeftColumn.TFrame"
-        right_style = "RightColumn.TFrame"
+        if weights is None:
+            weights = [1] * columns  # Equal weights if not specified
+        if bgs is None:
+            # Default backgrounds: alternate between BACKGROUND and SURFACE
+            bgs = [Theme.BACKGROUND if i % 2 == 0 else Theme.SURFACE for i in range(columns)]
 
-        # Configure styles only once at the class level
-        if not Container._styles_configured:
-            style = ttk.Style()
-            style.theme_use('clam')
-            style.configure(left_style, background=left_bg)
-            style.configure(right_style, background=right_bg)
-            Container._styles_configured = True
+        self.columns = []  # Store references to column frames
+        style = ttk.Style()
+        style.theme_use('clam')
 
-        # Create left column using ttk.Frame and set its style
-        self.left_column = ttk.Frame(self, style=left_style)
-        self.left_column.grid(row=0, column=0, sticky="nsew")
-
-        # Create right column using ttk.Frame and set its style
-        self.right_column = ttk.Frame(self, style=right_style)
-        self.right_column.grid(row=0, column=1, sticky="nsew")
-
-        # Configure grid weights to make columns expand equally
-        self.columnconfigure(0, weight=12)
-        self.columnconfigure(1, weight=88)
+        for i in range(columns):
+            # Use a safe style name for each column (no color codes)
+            style_name = f"Column{i}.TFrame"
+            if style_name not in Container._styles_configured:
+                style.configure(style_name, background=bgs[i % len(bgs)])
+                Container._styles_configured.add(style_name)
+            # Create the column frame
+            col = ttk.Frame(self, style=style_name)
+            col.grid(row=0, column=i, sticky="nsew")
+            self.columns.append(col)
+            self.columnconfigure(i, weight=weights[i % len(weights)])
         self.rowconfigure(0, weight=1)
 
-    def get_left_column(self):
+    def get_column(self, idx):
         """
-        Returns the left column frame for adding widgets.
+        Returns the frame for the specified column index.
+        Args:
+            idx: The column index (0-based).
+        Returns:
+            ttk.Frame: The frame for the column.
         """
-        return self.left_column
+        return self.columns[idx]
 
-    def get_right_column(self):
+    def get_columns(self):
         """
-        Returns the right column frame for adding widgets.
+        Returns a list of all column frames.
+        Returns:
+            list: List of ttk.Frame objects for each column.
         """
-        return self.right_column
+        return self.columns
 
