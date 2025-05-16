@@ -52,22 +52,25 @@ class App:
     def _create_layout(self):
         """
         Creates the layout for the application. Adds widgets to the main window.
-        Demonstrates usage of the flexible Container with 2 columns (3:9 ratio).
+        Demonstrates usage of the flexible Container with 3 columns (1:3:8 ratio).
         """
-        # Create a container with 2 columns, using a 3:9 width ratio
-        container = Container(self.root, columns=2, weights=[3, 9])
+        # Create a container with 3 columns, using a 1:3:8 width ratio
+        container = Container(self.root, num_col_row=3, weights=[1, 3, 8])
         container.pack(fill=tk.BOTH, expand=True)
 
         # Example: Add widgets to each column
         left_col = container.get_column(0)
-        right_col = container.get_column(1)
+        mid_col = container.get_column(1)
+        right_col = container.get_column(2)     
 
         # Add a label to the left column
-        left_label = ttk.Label(left_col, text="Left Column (3/12)")
+        left_label = ttk.Label(left_col, text="Left Column")
         left_label.pack(padx=10, pady=10)
-
+        # Add a label to the middle column
+        mid_label = ttk.Label(mid_col, text="Middle Column")
+        mid_label.pack(padx=10, pady=10)
         # Add a label to the right column
-        right_label = ttk.Label(right_col, text="Right Column (9/12)")
+        right_label = ttk.Label(right_col, text="Right Column")
         right_label.pack(padx=10, pady=10)
 
     def run(self):

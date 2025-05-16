@@ -9,13 +9,13 @@ class Container(ttk.Frame):
     """
     _styles_configured = set()  # Track which styles have been configured
 
-    def __init__(self, parent, grid_size=2, weights=None, bgs=None, paddings=None, direction="column", **kwargs):
+    def __init__(self, parent, num_col_row=2, weights=None, bgs=None, paddings=None, direction="column", **kwargs):
         """
         Initialize the Container.
 
         Args:
             parent: The parent tkinter widget.
-            grid_size: Number of columns/rows to create (default 2).
+            num_col_row: Number of columns/rows to create (default 2).
             weights: List of grid weights for each column/row (default: equal weights).
             bgs: List of background colors for each column/row (default: theme colors).
             paddings: List of paddings (int/tuple per column/row) or single int/tuple for all.
@@ -26,25 +26,25 @@ class Container(ttk.Frame):
 
         # Set default weights and backgrounds if not provided
         if weights is None:
-            weights = [1] * grid_size  # Equal weights if not specified
+            weights = [1] * num_col_row  # Equal weights if not specified
         if bgs is None:
-            # Default backgrounds: alternate between BACKGROUND and SURFACE
-            bgs = [Theme.BACKGROUND if i % 2 == 0 else Theme.SURFACE for i in range(grid_size)]
+            # Default backgrounds
+            bgs = [None] * num_col_row
 
         # Handle paddings: allow single value or list
         if paddings is None:
-            paddings = [0] * grid_size  # Default no padding
+            paddings = [0] * num_col_row  # Default no padding
         elif isinstance(paddings, (int, tuple)):
-            paddings = [paddings] * grid_size  # Apply same padding to all
+            paddings = [paddings] * num_col_row  # Apply same padding to all
         elif isinstance(paddings, list):
-            if len(paddings) < grid_size:
-                paddings = (paddings * grid_size)[:grid_size]
+            if len(paddings) < num_col_row:
+                paddings = (paddings * num_col_row)[:num_col_row]
 
         self.columns = []  # Store references to frames (columns or rows)
         style = ttk.Style()
         style.theme_use('clam')
 
-        for i in range(grid_size):
+        for i in range(num_col_row):
             style_name = f"Column{i}.TFrame"
             if style_name not in Container._styles_configured:
                 style.configure(style_name, background=bgs[i % len(bgs)])
@@ -63,21 +63,19 @@ class Container(ttk.Frame):
         else:
             self.columnconfigure(0, weight=1)
 
-    def get_column(self, idx):
+    def get_column(self, idx=None):
         """
-        Returns the frame for the specified column/row index.
-        Args:
-            idx: The column/row index (0-based).
-        Returns:
-            ttk.Frame: The frame for the column/row.
-        """
-        return self.columns[idx]
+        Returns the frame for the specified column/row index, or all columns/rows if idx is None.
 
-    def get_columns(self):
-        """
-        Returns a list of all column/row frames.
+        Args:
+            idx (int, optional): The column/row index (0-based). If None, returns all columns/rows.
+
         Returns:
-            list: List of ttk.Frame objects for each column/row.
+            ttk.Frame or list: The frame for the column/row if idx is provided, otherwise a list of all frames.
         """
-        return self.columns
+        # If idx is None, return all columns/rows as a list
+        if idx is None:
+            return self.columns
+        # Otherwise, return the specific column/row frame
+        return self.columns[idx]
 

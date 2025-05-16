@@ -35,17 +35,17 @@ if __name__ == "__main__":
 from ui.widget.containers import Container
 
 # 2 columns, 3:9 ratio (default is horizontal/columns)
-container = Container(parent, grid_size=2, weights=[3, 9])
+container = Container(parent, num_col_row=2, weights=[3, 9])
 container.pack(fill=tk.BOTH, expand=True)
 
 # 3 columns, equal width
-container = Container(parent, grid_size=3)
+container = Container(parent, num_col_row=3)
 
 # 4 columns, custom ratios and backgrounds
-container = Container(parent, grid_size=4, weights=[2, 3, 4, 3], bgs=["#fff", "#eee", "#ddd", "#ccc"])
+container = Container(parent, num_col_row=4, weights=[2, 3, 4, 3], bgs=["#fff", "#eee", "#ddd", "#ccc"])
 
 # 3 rows, vertical stacking (direction="row")
-container = Container(parent, grid_size=3, direction="row")
+container = Container(parent, num_col_row=3, direction="row")
 
 # Add widgets to columns
 for idx, col in enumerate(container.get_columns()):
@@ -74,9 +74,9 @@ Theme.style_widget(my_button, "Secondary.TButton")
 
 ## API Reference
 
-### `Container(parent, grid_size=2, weights=None, bgs=None, paddings=None, direction="column", **kwargs)`
+### `Container(parent, num_col_row=2, weights=None, bgs=None, paddings=None, direction="column", **kwargs)`
 - **parent:** Parent Tkinter widget.
-- **grid_size:** Number of columns or rows (default: 2).
+- **num_col_row:** Number of columns or rows (default: 2).
 - **weights:** List of grid weights for each column/row (default: equal weights).
 - **bgs:** List of background colors for each column/row (default: alternates theme colors).
 - **paddings:** Padding for columns/rows. Can be a single int/tuple (applied to all) or a list for per-column/row padding.
