@@ -29,7 +29,7 @@ class Container(ttk.Frame):
             weights = [1] * grid_size  # Equal weights if not specified
         if bgs is None:
             # Default backgrounds: alternate between BACKGROUND and SURFACE
-            bgs = [Theme.BACKGROUND, Theme.SURFACE] * (grid_size // 2 + 1)
+            bgs = [Theme.BACKGROUND if i % 2 == 0 else Theme.SURFACE for i in range(grid_size)]
 
         # Handle paddings: allow single value or list
         if paddings is None:
