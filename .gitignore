@@ -6,6 +6,8 @@
 .idea
 node_modules
 venv
+bk_images
+test.py
 
 # Python specific
 
